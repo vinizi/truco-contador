@@ -3,26 +3,30 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 
 export default function App() {
+  // Estados separados para cada time
+  const [pontosNos, setPontosNos] = useState(0);
+  const [pontosEles, setPontosEles] = useState(0);
 
-  const [pontos, setPontos] = useState(0);
-
-  function diminuir() {
-    if (pontos > 0) {
-      setPontos(pontos - 1);
+  // Função genérica para aumentar pontos (limite de 12)
+  function adicionarPonto(time) {
+    if (time === 'nos') {
+      pontosNos < 12 ? setPontosNos(pontosNos + 1) : setPontosNos(0);
+    } else {
+      pontosEles < 12 ? setPontosEles(pontosEles + 1) : setPontosEles(0);
     }
   }
-  function limite(){
-    if (pontos < 12){ 
-      setPontos(pontos + 1)
-   }else{
-    setPontos(0)
-   }
-}
+
+  // Função genérica para diminuir pontos
+  function removerPonto(time) {
+    if (time === 'nos' && pontosNos > 0) {
+      setPontosNos(pontosNos - 1);
+    } else if (time === 'eles' && pontosEles > 0) {
+      setPontosEles(pontosEles - 1);
+    }
+  }
 
   return (
     <View style={styles.container}>
-
-
       <Image
         source={{ uri: "https://brandigno.com.br/wp-content/uploads/2017/04/thumb-unipar.png" }}
         style={styles.logo}
@@ -31,22 +35,50 @@ export default function App() {
 
       <Text style={styles.titulo}>MARCADOR</Text>
 
-      <Text style={styles.pontuacao}>{pontos}</Text>
+      <View style={styles.placarContainer}>
+        {/* Coluna Time NÓS */}
+        <View style={styles.timeColuna}>
+          <Text style={styles.nomeTime}>NÓS</Text>
+          <Text style={styles.pontuacao}>{pontosNos}</Text>
+          
+          <View style={styles.botoesVertical}>
+            <TouchableOpacity 
+              style={styles.botaoMais} 
+              onPress={() => adicionarPonto('nos')}
+            >
+              <Text style={styles.textoBotao}>+</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.botaoMenos} 
+              onPress={() => removerPonto('nos')}
+            >
+              <Text style={styles.textoBotao}>-</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      <View style={styles.botoes}>
-        <TouchableOpacity
-          style={styles.botaoMais}
-          onPress={limite}
-        >
-          <Text style={styles.textoBotao}>+</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.botaoMenos}
-          onPress={diminuir}
-        >
-          <Text style={styles.textoBotao}>-</Text>
-        </TouchableOpacity>
+        {/* Coluna Time ELES */}
+        <View style={styles.timeColuna}>
+          <Text style={styles.nomeTime}>ELES</Text>
+          <Text style={styles.pontuacao}>{pontosEles}</Text>
+          
+          <View style={styles.botoesVertical}>
+            <TouchableOpacity 
+              style={styles.botaoMais} 
+              onPress={() => adicionarPonto('eles')}
+            >
+              <Text style={styles.textoBotao}>+</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.botaoMenos} 
+              onPress={() => removerPonto('eles')}
+            >
+              <Text style={styles.textoBotao}>-</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
       <StatusBar style="auto" />
@@ -59,50 +91,58 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-
     padding: 20,
   },
-
   logo: {
-    width: 400,    
-    height: 300,   
-    marginBottom: 0,
+    width: '100%',
+    height: 150,
+    marginTop: 40,
   },
-
   titulo: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginVertical: 20,
+    color: '#333',
   },
-
-  pontuacao: {
-    fontSize: 70,
+  placarContainer: {
+    flexDirection: 'row', // Coloca um time ao lado do outro
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 20,
+  },
+  timeColuna: {
+    alignItems: 'center',
+    width: '45%',
+  },
+  nomeTime: {
+    fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 60,
+    color: '#555',
   },
-
-  botoes: {
-    flexDirection: 'row',
+  pontuacao: {
+    fontSize: 80,
+    fontWeight: 'bold',
+    marginVertical: 20,
   },
-
+  botoesVertical: {
+    width: '100%',
+    gap: 10, // Espaçamento entre botões
+  },
   botaoMais: {
     backgroundColor: '#0B6B3A',
     paddingVertical: 15,
-    paddingHorizontal: 30,
     borderRadius: 10,
-    marginRight: 10, 
+    width: '100%',
   },
-
   botaoMenos: {
     backgroundColor: '#8B0015',
     paddingVertical: 15,
-    paddingHorizontal: 30,
     borderRadius: 10,
+    width: '100%',
   },
-
   textoBotao: {
     color: 'white',
-    fontSize: 22,
+    fontSize: 25,
     fontWeight: 'bold',
     textAlign: 'center',
   },
